@@ -4,6 +4,7 @@
 # The purpose of this program is to create a clone of the Flappy Bird game
 
 import pygame
+import random
 
 # initiate pygame module
 pygame.init()
@@ -12,27 +13,35 @@ pygame.init()
 display_width = 288
 display_height = 512
 
-white = (255, 255, 255)
-
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('Flappy Bird Clone')
 clock = pygame.time.Clock()
 
 # load all the graphics here
 birdImage = pygame.image.load('assets/images/redbird-upflap.png')
+bg = pygame.image.load('assets/images/background-night.png')
+base = pygame.image.load('assets/images/base.png')
+gameover = pygame.image.load('assets/images/gameover.png')
+soundFly = pygame.mixer.Sound('assets/audio/wing.wav')
+soundFall = pygame.mixer.Sound('assets/audio/die.ogg')
+
+# create bird object
+class Bird(object):
+    def __init__(self, image = pygame.image.load('assets/images/redbird-upflap.png')):
+        self.image = image
+
+# inititate a new bird and load new image as parameter
+newBird = Bird(pygame.image.load('assets/images/bluebird-upflap.png'))
 
 # bird function to display the bird
 def bird(x, y):
-    gameDisplay.blit(birdImage, (x, y)) # blit bird image in x and y coordinates
+    gameDisplay.blit(newBird.image, (x, y)) # blit bird image in x and y coordinates
 
 # Keep track of x and y coordinates of the bird
 x = display_width / 2
 y = display_height / 2
 
 y_change = 0
-
-# Adding background to the game
-bg = pygame.image.load('assets/images/background-night.png')
 
 # when crashed is true, quit the game
 crashed = False
@@ -43,16 +52,18 @@ while not crashed:
             crashed = True
 
         if event.type == pygame.KEYDOWN: # this event happens when a key is pressed
-            if event.key == pygame.K_j: # press 'j' to jump
+            if event.key == pygame.K_SPACE: # press BACKSPACE to jump
+                soundFly.play()
                 y_change = -10
 
         if event.type == pygame.KEYUP: # this event happens when a key is released
-            if event.key == pygame.K_j:
+            if event.key == pygame.K_SPACE:
                 y_change = 2
+                # soundFall.play()
 
     y += y_change
-    # gameDisplay.fill(white)
     gameDisplay.blit(bg, (0, 0))
+    gameDisplay.blit(base,(0, display_height - 112))
     bird(x, y)
 
     pygame.display.update()
