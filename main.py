@@ -2,9 +2,7 @@
 # Author: Joe Do & Stuart Larsen
 # Date: Feb 20, 2018
 # The purpose of this program is to create a clone of the Flappy Bird game
-#testing committ stuff
-#test round 2!
-#comment for push request
+
 
 import pygame
 import random
@@ -21,6 +19,7 @@ pygame.display.set_caption('Flappy Bird Clone')
 clock = pygame.time.Clock()
 
 # load all the graphics here
+start_screen = pygame.image.load('assets/images/message.png')
 birdImage = pygame.image.load('assets/images/redbird-upflap.png')
 bg = pygame.image.load('assets/images/background-night.png')
 base = pygame.image.load('assets/images/base.png')
@@ -28,6 +27,8 @@ gameover = pygame.image.load('assets/images/gameover.png')
 soundWing = pygame.mixer.Sound('assets/audio/wing.wav')
 soundDie = pygame.mixer.Sound('assets/audio/die.ogg')
 soundPoint = pygame.mixer.Sound('assets/audio/point.ogg')
+
+#display start screen as soon as game loads
 
 # create bird object
 class Bird(object):
