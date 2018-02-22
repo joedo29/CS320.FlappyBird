@@ -25,8 +25,9 @@ birdImage = pygame.image.load('assets/images/redbird-upflap.png')
 bg = pygame.image.load('assets/images/background-night.png')
 base = pygame.image.load('assets/images/base.png')
 gameover = pygame.image.load('assets/images/gameover.png')
-soundFly = pygame.mixer.Sound('assets/audio/wing.wav')
-soundFall = pygame.mixer.Sound('assets/audio/die.ogg')
+soundWing = pygame.mixer.Sound('assets/audio/wing.wav')
+soundDie = pygame.mixer.Sound('assets/audio/die.ogg')
+soundPoint = pygame.mixer.Sound('assets/audio/point.ogg')
 
 # create bird object
 class Bird(object):
