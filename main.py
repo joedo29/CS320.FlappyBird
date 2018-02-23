@@ -3,6 +3,8 @@
 # Date: Feb 20, 2018
 # The purpose of this program is to create a clone of the Flappy Bird game
 
+#it's 11:05 am
+
 import pygame
 import random
 import time
