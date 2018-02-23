@@ -1,10 +1,7 @@
-#it's now 11:22
 # CS320 Programming Language
 # Author: Joe Do & Stuart Larsen
 # Date: Feb 20, 2018
 # The purpose of this program is to create a clone of the Flappy Bird game
-
-#it's 11:14am
 
 import pygame
 import random
@@ -32,6 +29,7 @@ clock = pygame.time.Clock()
 startScreen  = pygame.image.load('assets/images/message.png')
 birdImage    = pygame.image.load('assets/images/redbird-upflap.png')
 pipeImage    = pygame.image.load('assets/images/pipe-red.png')
+pipeInvert   = pygame.transform.rotate(pipeImage,180)
 bg           = pygame.image.load('assets/images/background-night.png')
 base         = pygame.image.load('assets/images/base.png')
 gameover     = pygame.image.load('assets/images/gameover.png')
@@ -53,20 +51,25 @@ soundPoint   = pygame.mixer.Sound('assets/audio/point.ogg')
 def bird(x, y):
     gameDisplay.blit(birdImage, (x, y)) # blit bird image in x and y coordinates
 
+# function to create and move pipe across the screen
 def movePipe():
-   for x in range (0,5):
-       pipePosition = pipeImage.get_rect().move(275,random.randint(175, 325))
-       #invertPipePosition = redPipe.get_rect().move(275, 0)
-       gameDisplay.blit(pipeImage, pipePosition)
-       pygame.display.update()
-       for x in range (200):
-           gameDisplay.blit(bg, pipePosition, pipePosition)
-           pipePosition = pipePosition.move(-2,0)
-           gameDisplay.blit(pipeImage, pipePosition)
-           gameDisplay.blit(startScreen,(55, 100))
-           gameDisplay.blit(base,(0,400))
-           pygame.display.update()
-           pygame.time.delay(10)
+    randomY = random.randint(175,325)
+    pipePosition = pipeImage.get_rect().move(275,randomY)
+    pipePositionInvert = pipeInvert.get_rect().move(275, randomY-400)
+    gameDisplay.blit(pipeInvert, pipePositionInvert)
+    gameDisplay.blit(pipeImage, pipePosition)
+    pygame.display.update()
+    for x in range (200):
+        gameDisplay.blit(bg, pipePositionInvert, pipePositionInvert)
+        gameDisplay.blit(bg, pipePosition, pipePosition)
+        pipePositionInvert = pipePositionInvert.move(-2,0)
+        pipePosition = pipePosition.move(-2,0)
+        gameDisplay.blit(pipeInvert, pipePositionInvert)
+        gameDisplay.blit(pipeImage, pipePosition)
+        gameDisplay.blit(startScreen,(55, 100))
+        gameDisplay.blit(base,(0,400))
+        pygame.display.update()
+        pygame.time.delay(10)
 
 def things(thingx, thingy, thingw, thingh, color):
     pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
@@ -142,7 +145,7 @@ def game_loop():
 
         if thing_startx < display_width:
             thing_startx = 0 + thing_speed
-
+        movePipe()
         pygame.display.update()
         clock.tick(60)
 
