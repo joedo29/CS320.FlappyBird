@@ -1,4 +1,4 @@
-#it's 11:21 am
+#it's now 11:22
 # CS320 Programming Language
 # Author: Joe Do & Stuart Larsen
 # Date: Feb 20, 2018
