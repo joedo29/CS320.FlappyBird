@@ -4,6 +4,7 @@
 # The purpose of this program is to create a clone of the Flappy Bird game
 
 #it's 11:05 am
+#it's 11:13 am
 
 import pygame
 import random
