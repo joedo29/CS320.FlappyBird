@@ -125,8 +125,8 @@ def game_loop():
 
 
     # display start screen at start of game, and when player loses
-    startInitialized = True
-    while startInitialized:
+    startInitialized = False
+    while not startInitialized:
         gameDisplay.blit(bg, (0, 0))
         gameDisplay.blit(startScreen,(55,80))
         gameDisplay.blit(base,(0, display_height - 112))
@@ -134,7 +134,7 @@ def game_loop():
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    startInitialized = False
+                    startInitialized = True
                     
     # when crashed is true, quit the game
     gameExit = False
