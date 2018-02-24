@@ -123,6 +123,19 @@ def game_loop():
     pipeTopY    = -170
     pipe_speed  = 4
 
+
+    # display start screen at start of game, and when player loses
+    startInitialized = True
+    while startInitialized:
+        gameDisplay.blit(bg, (0, 0))
+        gameDisplay.blit(startScreen,(55,80))
+        gameDisplay.blit(base,(0, display_height - 112))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    startInitialized = False
+                    
     # when crashed is true, quit the game
     gameExit = False
 
