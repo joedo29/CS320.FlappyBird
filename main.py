@@ -1,8 +1,8 @@
+#it's now 11:22
 # CS320 Programming Language
 # Author: Joe Do & Stuart Larsen
 # Date: Feb 20, 2018
 # The purpose of this program is to create a clone of the Flappy Bird game
-
 
 import pygame
 import random
