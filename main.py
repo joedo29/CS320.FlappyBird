@@ -3,7 +3,6 @@
 # Date: Feb 20, 2018
 # The purpose of this program is to create a clone of the Flappy Bird game
 
-# it's 11:01am
 
 import pygame
 import random
@@ -22,6 +21,7 @@ display_width  = 288
 display_height = 512
 bird_height    = 24
 base_height    = 112
+pipe_height    = 320
 
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('Flappy Bird Clone')
@@ -38,6 +38,9 @@ soundWing    = pygame.mixer.Sound('assets/audio/wing.wav')
 soundDie     = pygame.mixer.Sound('assets/audio/die.ogg')
 soundPoint   = pygame.mixer.Sound('assets/audio/point.ogg')
 
+# Flip the pipe over
+pipeInvert   = pygame.transform.rotate(pipeImage,180)
+
 #display start screen as soon as game loads
 
 # # create bird object
@@ -53,22 +56,41 @@ def bird(x, y):
     gameDisplay.blit(birdImage, (x, y)) # blit bird image in x and y coordinates
 
 def movePipe():
-   for x in range (0,5):
-       pipePosition = pipeImage.get_rect().move(275,random.randint(175, 325))
-       #invertPipePosition = redPipe.get_rect().move(275, 0)
-       gameDisplay.blit(pipeImage, pipePosition)
-       pygame.display.update()
-       for x in range (200):
-           gameDisplay.blit(bg, pipePosition, pipePosition)
-           pipePosition = pipePosition.move(-2,0)
-           gameDisplay.blit(pipeImage, pipePosition)
-           gameDisplay.blit(startScreen,(55, 100))
-           gameDisplay.blit(base,(0,400))
-           pygame.display.update()
-           pygame.time.delay(10)
+    randomY = random.randint(175,325)
+    pipePosition = pipeImage.get_rect().move(275,randomY)
+    pipePositionInvert = pipeInvert.get_rect().move(275, randomY-400)
 
-def things(thingx, thingy, thingw, thingh, color):
-    pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
+    gameDisplay.blit(pipeInvert, pipePositionInvert)
+    gameDisplay.blit(pipeImage, pipePosition)
+
+    # pygame.display.update()
+    gameDisplay.blit(bg, pipePositionInvert, pipePositionInvert)
+    gameDisplay.blit(bg, pipePosition, pipePosition)
+
+    pipePositionInvert = pipePositionInvert.move(-2,0)
+    pipePosition = pipePosition.move(-2,0)
+
+    gameDisplay.blit(pipeInvert, pipePositionInvert)
+    gameDisplay.blit(pipeImage, pipePosition)
+    # gameDisplay.blit(startScreen,(55, 100))
+
+    gameDisplay.blit(base,(0,400))
+
+    pygame.display.update()
+    pygame.time.delay(10)
+
+# Display pipe up side down
+def bottomPipe(xCoordinate, yCoordinate):
+    gameDisplay.blit(pipeImage, (xCoordinate, yCoordinate))
+    # pygame.display.update()
+
+# Display pipe from bottom up
+def topPipe(xCoordinate, yCoordinate):
+    gameDisplay.blit(pipeInvert, (xCoordinate, yCoordinate))
+    # pygame.display.update()
+
+# def things(thingx, thingy, thingw, thingh, color):
+#     pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
 
 def text_objects(text, font):
     textSurface = font.render(text, True, white)
@@ -93,16 +115,13 @@ def crash():
 def game_loop():
 
     # Keep track of x and y coordinates of the bird
-    x = display_width / 3
-    y = (display_height - base_height) / 2
-
-    y_change = 0
-
-    thing_startx = display_width + 20
-    thing_starty = 0
-    thing_speed  = 14
-    thing_width  = 30
-    thing_height = (display_height - base_height) / 2
+    birdX       = display_width / 3
+    birdY       = (display_height - base_height) / 2
+    birdMove    = 0
+    pipeStartX  = display_width + 10
+    pipeBottomY = 250
+    pipeTopY    = -170
+    pipe_speed  = 4
 
     # when crashed is true, quit the game
     gameExit = False
@@ -116,31 +135,46 @@ def game_loop():
             if event.type == pygame.KEYDOWN: # this event happens when a key is pressed
                 if event.key == pygame.K_SPACE: # press spacebar to jump
                     soundWing.play()
-                    y_change = -7
+                    birdMove = -7
 
             if event.type == pygame.KEYUP: # this event happens when a key is released
                 if event.key == pygame.K_SPACE:
-                    y_change = 2
+                    birdMove = 2
 
-        y += y_change
+        birdY += birdMove
         gameDisplay.blit(bg, (0, 0)) # draw background
+
+        # draw top pipe
+        bottomPipe(pipeStartX, pipeBottomY)
+
         gameDisplay.blit(base,(0, display_height - 112)) # draw base
 
-        # thingx, thingy, thingw, thingh, color
-        # things(thing_startx, thing_starty, thing_width, thing_height, white)
-        # thing_startx -= 10
-        # thing_height = random.randrange(10, (display_height - base_height) / 2)
+        bird(birdX, birdY) # draw bird
 
-        bird(x, y) # draw bird
-        # movePipe()
+        # draw the bottom pipe
+        topPipe(pipeStartX, pipeTopY)
+
+        pipeStartX -= pipe_speed # make the pipe move left four pixel at a time
+
         # When bird hit base, pipe or top of screen, it will crash
-        if y > (display_height - bird_height - base_height) or y < 0:
+        if birdY > (display_height - bird_height - base_height) or birdY < 0:
             soundDie.play()
-            time.sleep(1)
+            time.sleep(2)
             crash()
 
-        if thing_startx < display_width:
-            thing_startx = 0 + thing_speed
+        # bird crashes when it hits any pipe
+        if birdX + 34 > pipeStartX and (birdY < pipeTopY + pipe_height or birdY + 24 > pipeBottomY):
+            soundDie.play()
+            time.sleep(2)
+            crash()
+
+        # moving pipes accross the screen
+        if pipeStartX < -50:
+            pipeStartX = display_width
+
+            # make pipes change y coordinate randomly
+            pipeTopY = random.randint(-260, -40)
+            pipeBottomY = pipe_height + 100 + pipeTopY
 
         pygame.display.update()
         clock.tick(60)
