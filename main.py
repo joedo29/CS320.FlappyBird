@@ -148,7 +148,7 @@ def game_loop():
 
         birdY += birdMove
         gameDisplay.blit(bg, (0, 0)) # draw background
-        passedPipe(passed)
+        passedPipe(passed) # write score
 
         # draw top pipe
         bottomPipe(pipeStartX, pipeBottomY)
@@ -165,6 +165,7 @@ def game_loop():
 
         pipeStartX -= pipe_speed # make the pipe move left four pixel at a time
 
+        # update score when bird passed a pipe
         if birdX > pipeStartX:
             passed += 1
 
@@ -175,7 +176,7 @@ def game_loop():
             crash()
 
         # bird crashes when it hits any pipe
-        if birdX + 34 > pipeStartX and (birdY < pipeTopY + pipe_height or birdY + 24 > pipeBottomY):
+        if birdX + 28 > pipeStartX and (birdY < pipeTopY + pipe_height or birdY + 24 > pipeBottomY):
             soundHit.play()
             # soundDie.play()
             time.sleep(2)
