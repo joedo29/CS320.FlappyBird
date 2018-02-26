@@ -35,6 +35,7 @@ bg           = pygame.image.load('assets/images/background-night.png')
 base         = pygame.image.load('assets/images/base.png')
 gameover     = pygame.image.load('assets/images/gameover.png')
 soundWing    = pygame.mixer.Sound('assets/audio/wing.wav')
+soundHit     = pygame.mixer.Sound('assets/audio/hit.wav')
 soundDie     = pygame.mixer.Sound('assets/audio/die.ogg')
 soundPoint   = pygame.mixer.Sound('assets/audio/point.ogg')
 
@@ -54,6 +55,12 @@ pipeInvert   = pygame.transform.rotate(pipeImage,180)
 # bird function to display the bird
 def bird(x, y):
     gameDisplay.blit(birdImage, (x, y)) # blit bird image in x and y coordinates
+
+# this function will print out score
+def passedPipe(count):
+    font = pygame.font.SysFont(None, 25)
+    text = font.render("Score: " + str(count), True, white)
+    gameDisplay.blit(text, (0, 0))
 
 def movePipe():
     randomY = random.randint(175,325)
@@ -89,9 +96,6 @@ def topPipe(xCoordinate, yCoordinate):
     gameDisplay.blit(pipeInvert, (xCoordinate, yCoordinate))
     # pygame.display.update()
 
-# def things(thingx, thingy, thingw, thingh, color):
-#     pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
-
 def text_objects(text, font):
     textSurface = font.render(text, True, white)
     return textSurface, textSurface.get_rect()
@@ -106,7 +110,7 @@ def message_display(text):
 
     time.sleep(2)
 
-    game_loop()
+    # game_loop()
 
 def crash():
     # message_display('You Crashed')
@@ -137,6 +141,24 @@ def game_loop():
     pipeBottomY = 250
     pipeTopY    = -170
     pipe_speed  = 4
+    passed      = 0
+
+
+    # display start screen at start of game, and when player loses
+    startInitialized = False
+    while not startInitialized:
+        gameDisplay.blit(bg, (0, 0))
+        gameDisplay.blit(startScreen,(55,80))
+        gameDisplay.blit(base,(0, display_height - 112))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_b:
+                    startInitialized = True
+
 
 
     # display start screen at start of game, and when player loses
@@ -170,10 +192,11 @@ def game_loop():
 
             if event.type == pygame.KEYUP: # this event happens when a key is released
                 if event.key == pygame.K_SPACE:
-                    birdMove = 2
+                    birdMove = 3
 
         birdY += birdMove
         gameDisplay.blit(bg, (0, 0)) # draw background
+        # passedPipe(passed) # write score
 
         # draw top pipe
         bottomPipe(pipeStartX, pipeBottomY)
@@ -185,27 +208,40 @@ def game_loop():
         # draw the bottom pipe
         topPipe(pipeStartX, pipeTopY)
 
+        # display score
+        # passedPipe(passed)
+
         pipeStartX -= pipe_speed # make the pipe move left four pixel at a time
 
+        # update score when bird passed a pipe
+        if birdX == pipeStartX + 52:
+            passed += 1
+            print('true')
+
+        passedPipe(passed)
+
         # When bird hit base, pipe or top of screen, it will crash
-        if birdY > (display_height - bird_height - base_height) or birdY < 0:
+        if birdY > display_height - bird_height - base_height:
             soundDie.play()
             time.sleep(2)
             crash()
 
         # bird crashes when it hits any pipe
-        if birdX + 34 > pipeStartX and (birdY < pipeTopY + pipe_height or birdY + 24 > pipeBottomY):
-            soundDie.play()
-            time.sleep(2)
-            crash()
+        if birdX + 25 > pipeStartX and birdX - 50 < pipeStartX:
+            if birdX + 25 > pipeStartX and (birdY < pipeTopY + pipe_height or birdY + 24 > pipeBottomY):
+
+                soundHit.play()
+                # soundDie.play()
+                time.sleep(2)
+                crash()
 
         # moving pipes accross the screen
         if pipeStartX < -50:
             pipeStartX = display_width
 
             # make pipes change y coordinate randomly
-            pipeTopY = random.randint(-260, -40)
-            pipeBottomY = pipe_height + 100 + pipeTopY
+            # pipeTopY = random.randint(-260, -40)
+            # pipeBottomY = pipe_height + 100 + pipeTopY
 
         pygame.display.update()
         clock.tick(60)
