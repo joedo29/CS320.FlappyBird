@@ -27,7 +27,7 @@ pygame.display.set_caption('Flappy Bird Clone')
 clock = pygame.time.Clock()
 
 # load all the graphics and sound here
-startScreen  = pygame.image.load('assets/images/message.png')
+startScreen  = pygame.image.load('assets/images/message1.png')
 birdImage    = pygame.image.load('assets/images/redbird-upflap.png')
 pipeImage    = pygame.image.load('assets/images/pipe-red.png')
 bg           = pygame.image.load('assets/images/background-night.png')
@@ -37,6 +37,7 @@ soundWing    = pygame.mixer.Sound('assets/audio/wing.wav')
 soundHit     = pygame.mixer.Sound('assets/audio/hit.wav')
 soundDie     = pygame.mixer.Sound('assets/audio/die.ogg')
 soundPoint   = pygame.mixer.Sound('assets/audio/point.ogg')
+soundWin     = pygame.mixer.Sound('assets/audio/point.wav')
 
 # Flip the pipe over
 pipeInvert   = pygame.transform.rotate(pipeImage,180)
@@ -44,6 +45,10 @@ pipeInvert   = pygame.transform.rotate(pipeImage,180)
 # bird function to display the bird
 def bird(x, y):
     gameDisplay.blit(birdImage, (x, y)) # blit bird image in x and y coordinates
+
+# move base accorss the screen
+def baseMove(xCoordinate, yCoordinate):
+    gameDisplay.blit(base,(xCoordinate, yCoordinate))
 
 # this function will print out score
 def passedPipe(count):
@@ -65,20 +70,20 @@ def topPipe(xCoordinate, yCoordinate):
 def crash():
     game_loop()
 
-#def game_intro():
-#    startInitialized = False
-#    while not startInitialized:
-#        gameDisplay.blit(bg, (0, 0))
-#        gameDisplay.blit(startScreen,(55,80))
-#        gameDisplay.blit(base,(0, display_height - 112))
-#        pygame.display.update()
-#        for event in pygame.event.get():
-#            if event.type == pygame.QUIT:
-#                pygame.quit()
-#                quit()
-#            if event.type == pygame.KEYDOWN:
-#                if event.key == pygame.K_SPACE:
-#                    startInitialized = True
+def game_intro():
+   startInitialized = False
+   while not startInitialized:
+       gameDisplay.blit(bg, (0, 0))
+       gameDisplay.blit(startScreen,(55,80))
+       gameDisplay.blit(base,(0, display_height - 112))
+       pygame.display.update()
+       for event in pygame.event.get():
+           if event.type == pygame.QUIT:
+               pygame.quit()
+               quit()
+           if event.type == pygame.KEYDOWN:
+               if event.key == pygame.K_b:
+                   startInitialized = True
 
 def game_loop():
 
@@ -86,46 +91,16 @@ def game_loop():
     birdX       = display_width / 3
     birdY       = (display_height - base_height) / 2
     birdMove    = 0
-    pipeStartX  = display_width + 10
+    pipeStartX  = display_width + 100
     pipeBottomY = 250
     pipeTopY    = -170
     pipe_speed  = 4
     passed      = 0
+    baseStartX  = 0
+    baseEndX    = display_width
 
     # display start screen at start of game, and when player loses
-    startInitialized = False
-    while not startInitialized:
-        gameDisplay.blit(bg, (0, 0))
-        gameDisplay.blit(startScreen,(55,80))
-        gameDisplay.blit(base,(0, display_height - 112))
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_b:
-                    birdMove = 3
-                    startInitialized = True
-
-=======
-
-
-    # display start screen at start of game, and when player loses
-    startInitialized = False
-    while not startInitialized:
-        gameDisplay.blit(bg, (0, 0))
-        gameDisplay.blit(startScreen,(55,80))
-        gameDisplay.blit(base,(0, display_height - 112))
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-              #  quit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    startInitialized = True
-                    
+    game_intro()
 
     # when crashed is true, quit the game
     gameExit = False
@@ -138,11 +113,11 @@ def game_loop():
             if event.type == pygame.KEYDOWN: # this event happens when a key is pressed
                 if event.key == pygame.K_SPACE: # press spacebar to jump
                     soundWing.play()
-                    birdMove = -7
+                    birdMove = -4
 
             if event.type == pygame.KEYUP: # this event happens when a key is released
                 if event.key == pygame.K_SPACE:
-                    birdMove = 3
+                    birdMove = 2
 
         birdY += birdMove
         gameDisplay.blit(bg, (0, 0)) # draw background
@@ -150,6 +125,10 @@ def game_loop():
         # draw top pipe
         bottomPipe(pipeStartX, pipeBottomY)
 
+        # baseMove(baseStartX, display_height - 112)
+        # baseStartX -= pipe_speed
+        # if baseStartX < display_width:
+        #     baseStartX = display_width
         gameDisplay.blit(base,(0, display_height - 112)) # draw base
 
         bird(birdX, birdY) # draw bird
@@ -161,6 +140,7 @@ def game_loop():
 
         # update score when bird passed a pipe
         if birdX == pipeStartX + 52:
+            soundWin.play()
             passed += 1
 
         passedPipe(passed)
@@ -183,15 +163,11 @@ def game_loop():
             pipeStartX = display_width
 
             # make pipes change y coordinate randomly
-            pipeTopY = random.randint(-260, -40)
+            pipeTopY = random.randint(-200, -40)
             pipeBottomY = pipe_height + 100 + pipeTopY
 
         pygame.display.update()
         clock.tick(60)
-
-
-=======
-#game_intro()
 
 game_loop()
 pygame.quit()
