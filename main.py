@@ -65,6 +65,21 @@ def topPipe(xCoordinate, yCoordinate):
 def crash():
     game_loop()
 
+#def game_intro():
+#    startInitialized = False
+#    while not startInitialized:
+#        gameDisplay.blit(bg, (0, 0))
+#        gameDisplay.blit(startScreen,(55,80))
+#        gameDisplay.blit(base,(0, display_height - 112))
+#        pygame.display.update()
+#        for event in pygame.event.get():
+#            if event.type == pygame.QUIT:
+#                pygame.quit()
+#                quit()
+#            if event.type == pygame.KEYDOWN:
+#                if event.key == pygame.K_SPACE:
+#                    startInitialized = True
+
 def game_loop():
 
     # Keep track of x and y coordinates of the bird
@@ -92,6 +107,25 @@ def game_loop():
                 if event.key == pygame.K_b:
                     birdMove = 3
                     startInitialized = True
+
+=======
+
+
+    # display start screen at start of game, and when player loses
+    startInitialized = False
+    while not startInitialized:
+        gameDisplay.blit(bg, (0, 0))
+        gameDisplay.blit(startScreen,(55,80))
+        gameDisplay.blit(base,(0, display_height - 112))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+              #  quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    startInitialized = True
+                    
 
     # when crashed is true, quit the game
     gameExit = False
@@ -154,6 +188,10 @@ def game_loop():
 
         pygame.display.update()
         clock.tick(60)
+
+
+=======
+#game_intro()
 
 game_loop()
 pygame.quit()
