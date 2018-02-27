@@ -47,8 +47,11 @@ def bird(x, y):
     gameDisplay.blit(birdImage, (x, y)) # blit bird image in x and y coordinates
 
 # move base accorss the screen
-def baseMove(xCoordinate, yCoordinate):
-    gameDisplay.blit(base,(xCoordinate, yCoordinate))
+def base_move(baseStartX):
+   baseEndX = baseStartX % base.get_rect().width
+   gameDisplay.blit(base,(baseEndX - base.get_rect().width, display_height - 112))
+   if baseEndX < display_width:
+       gameDisplay.blit(base, (baseEndX, display_height - 112))
 
 # this function will print out score
 def passedPipe(count):
@@ -56,20 +59,19 @@ def passedPipe(count):
     text = font.render("Score: " + str(count), True, white)
     gameDisplay.blit(text, (0, 0))
 
-# Display pipe up side down
+# Display the bottom pipe
 def bottomPipe(xCoordinate, yCoordinate):
     gameDisplay.blit(pipeImage, (xCoordinate, yCoordinate))
-    # pygame.display.update()
 
-# Display pipe from bottom up
+# Display the top pipe
 def topPipe(xCoordinate, yCoordinate):
     gameDisplay.blit(pipeInvert, (xCoordinate, yCoordinate))
-    # pygame.display.update()
 
 # Keep the game going after bird crashed
 def crash():
     game_loop()
 
+# display start screen at start of game, and when player loses
 def game_intro():
    startInitialized = False
    while not startInitialized:
@@ -85,9 +87,8 @@ def game_intro():
                if event.key == pygame.K_b:
                    startInitialized = True
 
+# this is the main game loop
 def game_loop():
-
-    # Keep track of x and y coordinates of the bird
     birdX       = display_width / 3
     birdY       = (display_height - base_height) / 2
     birdMove    = 0
@@ -97,9 +98,7 @@ def game_loop():
     pipe_speed  = 4
     passed      = 0
     baseStartX  = 0
-    baseEndX    = display_width
 
-    # display start screen at start of game, and when player loses
     game_intro()
 
     # when crashed is true, quit the game
@@ -125,11 +124,10 @@ def game_loop():
         # draw top pipe
         bottomPipe(pipeStartX, pipeBottomY)
 
-        # baseMove(baseStartX, display_height - 112)
-        # baseStartX -= pipe_speed
-        # if baseStartX < display_width:
-        #     baseStartX = display_width
-        gameDisplay.blit(base,(0, display_height - 112)) # draw base
+        #calls baseMove to display the base image
+        base_move(baseStartX)
+        #updates base image x to make it look like it's moving
+        baseStartX -= 2
 
         bird(birdX, birdY) # draw bird
 
